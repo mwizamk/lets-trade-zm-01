@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signup | Let's Trade ZM</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/signup.css">
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo"><span>Let's</span> Trade ZM</a>
+  <a href="login.html" class="login-link">Existing customer? <strong>Sign in</strong></a>
+</header>
+
+<main class="signup-wrapper">
+<div class="signup-container">
+
+<div class="progress-container">
+  <div class="progress-line"><div id="progressBar"></div></div>
+  <div class="progress-steps">
+    <div class="progress-step active"><span>1</span><small>Service</small></div>
+    <div class="progress-step"><span>2</span><small>Cart</small></div>
+    <div class="progress-step"><span>3</span><small>Details</small></div>
+    <div class="progress-step"><span>4</span><small>Payment</small></div>
+    <div class="progress-step"><span>5</span><small>Done</small></div>
+  </div>
+</div>
+
+<section class="form-step active" data-step="1">
+  <div class="step-heading"><span class="eyebrow">STEP 1</span><h1>Choose your subscription</h1><p>Select the service and package you want.</p></div>
+  <div class="filter-row">
+    <button class="filter active" data-filter="all">All</button>
+    <button class="filter" data-filter="shared">Shared</button>
+    <button class="filter" data-filter="private">Private</button>
+  </div>
+  <div id="signupProducts" class="signup-products"></div>
+  <div class="bottom-actions"><a href="index.html" class="back-btn">Cancel</a><button id="serviceNext" class="primary-btn" disabled>Continue</button></div>
+</section>
+
+<section class="form-step" data-step="2">
+  <div class="step-heading"><span class="eyebrow">STEP 2</span><h1>Review your order</h1><p>Check your selected subscription before continuing.</p></div>
+  <div id="cartContainer"></div>
+  <div class="bottom-actions"><button class="back-btn" data-back="1">Back</button><button class="primary-btn" data-next="3">Continue</button></div>
+</section>
+
+<section class="form-step" data-step="3">
+  <div class="step-heading"><span class="eyebrow">STEP 3</span><h1>Your details</h1><p>These details will be used for your customer account.</p></div>
+  <form id="customerForm">
+    <div class="input-grid">
+      <div class="input-group"><label>Full name</label><input type="text" id="customerName" placeholder="Your full name" required></div>
+      <div class="input-group"><label>Phone number</label><input type="tel" id="customerPhone" placeholder="097..." required></div>
+      <div class="input-group full"><label>Email address</label><input type="email" id="customerEmail" placeholder="you@example.com" required></div>
+    </div>
+    <div class="login-code-info"><div class="code-icon">🔐</div><div><strong>Your 4-digit access code</strong><p>A 4-digit customer access code will be generated after signup.</p></div></div>
+  </form>
+  <div class="bottom-actions"><button class="back-btn" data-back="2">Back</button><button class="primary-btn" id="detailsNext">Continue</button></div>
+</section>
+
+<section class="form-step" data-step="4">
+  <div class="step-heading"><span class="eyebrow">STEP 4</span><h1>Payment</h1><p>Select your preferred payment method.</p></div>
+  <div class="payment-methods">
+    <label class="payment-card"><input type="radio" name="payment" value="mobile_money" checked><div><strong>Mobile Money</strong><span>MTN / Airtel / Zamtel</span></div></label>
+    <label class="payment-card"><input type="radio" name="payment" value="bank"><div><strong>Bank / Transfer</strong><span>Manual payment verification</span></div></label>
+  </div>
+  <div id="paymentSummary"></div>
+  <div class="bottom-actions"><button class="back-btn" data-back="3">Back</button><button class="primary-btn" id="submitOrder">Submit Order</button></div>
+</section>
+
+<section class="form-step success-step" data-step="5">
+  <div class="success-icon">✓</div>
+  <span class="eyebrow">SUBMISSION RECEIVED</span>
+  <h1>Thank you!</h1>
+  <p>Your subscription request has been submitted successfully.</p>
+  <div class="customer-code"><span>Your 4-digit customer code</span><strong id="generatedCode">0000</strong><small>Keep this code safe. Use it with your phone number or email to access your dashboard.</small></div>
+  <div class="success-actions"><a href="login.html" class="primary-btn">Go to Customer Login</a><a href="index.html" class="secondary-btn">Back Home</a></div>
+</section>
+
+</div>
+</main>
+<script src="js/data.js"></script>
+<script src="js/signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal | Let's Trade ZM</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<header class="admin-header">
+  <div class="logo"><span>Let's</span> Trade ZM <small>ADMIN</small></div>
+  <button id="adminLogout">Sign out</button>
+</header>
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <button class="admin-nav active">Dashboard</button>
+    <button class="admin-nav">Orders</button>
+    <button class="admin-nav">Customers</button>
+    <button class="admin-nav">Price List</button>
+    <button class="admin-nav">Accounts</button>
+    <button class="admin-nav">Subscriptions</button>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-title"><div><span class="eyebrow">ADMIN PORTAL</span><h1>Dashboard</h1></div><button class="primary-btn">+ New Service</button></div>
+    <div class="stats-grid">
+      <div class="stat-card"><span>CUSTOMERS</span><strong>0</strong></div>
+      <div class="stat-card"><span>PENDING ORDERS</span><strong>0</strong></div>
+      <div class="stat-card"><span>ACTIVE SUBSCRIPTIONS</span><strong>0</strong></div>
+      <div class="stat-card"><span>REVENUE</span><strong>K0</strong></div>
+    </div>
+    <section class="admin-panel">
+      <div class="panel-header"><div><h2>Recent orders</h2><p>Manage recent customer requests.</p></div><button>View all</button></div>
+      <div class="table-wrapper"><table><thead><tr><th>Order</th><th>Customer</th><th>Service</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="ordersTable"></tbody></table></div>
+    </section>
+    <section class="admin-panel">
+      <div class="panel-header"><div><h2>Price List</h2><p>Services currently displayed to customers.</p></div></div>
+      <div id="adminPriceList" class="admin-price-list"></div>
+    </section>
+  </main>
+</div>
+<script src="js/data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

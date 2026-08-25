@@ -17,7 +17,13 @@
     href="css/style.css"
   >
 
+  <link
+    rel="stylesheet"
+    href="css/admin.css"
+  >
+
 </head>
+
 
 <body>
 
@@ -30,23 +36,15 @@
     <span>Let's</span> Trade ZM
   </a>
 
-  <nav>
-
-    <a href="index.html">
-      Customer Site
-    </a>
-
-  </nav>
-
 </header>
 
 
 <main class="page">
 
-  <section class="checkout-panel">
+  <section class="admin-section">
 
     <p class="eyebrow">
-      ADMINISTRATION
+      ADMINISTRATOR ACCESS
     </p>
 
     <h1>
@@ -54,22 +52,25 @@
     </h1>
 
     <p class="intro">
-      Sign in to access the Let's Trade ZM management portal.
+      Sign in to access the Let's Trade ZM management console.
     </p>
 
 
-    <form id="adminLoginForm">
+    <form
+      id="adminLoginForm"
+      class="admin-form"
+    >
 
       <label>
 
-        Email address
+        Email
 
         <input
           id="adminEmail"
           type="email"
           required
-          autocomplete="email"
-          placeholder="admin@example.com"
+          autocomplete="username"
+          placeholder="Admin email"
         >
 
       </label>
@@ -84,7 +85,7 @@
           type="password"
           required
           autocomplete="current-password"
-          placeholder="Enter your password"
+          placeholder="Password"
         >
 
       </label>

@@ -1,4 +1,4 @@
-const PRICE_LIST = [
+export const PRICE_LIST = [
 {id:1,ownership:"shared",service:"Netflix",package:"Premium",price:65,duration:"Monthly",description:"Netflix Premium shared slot",status:"active"},
 {id:2,ownership:"private",service:"Netflix",package:"Mobile",price:160,duration:"Monthly",description:"Private Netflix Mobile",status:"active"},
 {id:3,ownership:"private",service:"Netflix",package:"Basic",price:250,duration:"Monthly",description:"Private Netflix Basic",status:"active"},

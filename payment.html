@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <title>Payment | Let's Trade ZM</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+</head>
+
+
+<body>
+
+
+<header class="navbar">
+
+  <a
+    class="logo"
+    href="index.html"
+  >
+    <span>Let's</span> Trade ZM
+  </a>
+
+  <nav>
+
+    <a href="index.html">
+      Home
+    </a>
+
+  </nav>
+
+</header>
+
+
+
+<main class="page">
+
+  <p class="eyebrow">
+    PAYMENT
+  </p>
+
+  <h1>
+    Complete your <em>payment.</em>
+  </h1>
+
+  <p class="intro">
+    Submit your payment details below.
+    Your order will remain pending until payment
+    has been verified by Let's Trade ZM.
+  </p>
+
+
+
+  <!-- ORDER -->
+
+  <section class="admin-section">
+
+    <h2>
+      Order summary
+    </h2>
+
+    <div id="orderSummary">
+
+      <p>
+        Loading order...
+      </p>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- PAYMENT FORM -->
+
+  <section class="admin-section">
+
+    <h2>
+      Payment details
+    </h2>
+
+
+    <form id="paymentForm">
+
+
+      <label>
+
+        Payment method
+
+        <select
+          id="paymentMethod"
+          required
+        >
+
+          <option value="">
+            Select payment method
+          </option>
+
+          <option value="Airtel Money">
+            Airtel Money
+          </option>
+
+          <option value="MTN Money">
+            MTN Money
+          </option>
+
+          <option value="Bank Transfer">
+            Bank Transfer
+          </option>
+
+        </select>
+
+      </label>
+
+
+
+      <label>
+
+        Amount paid
+
+        <input
+          id="paymentAmount"
+          type="number"
+          min="0"
+          step="0.01"
+          required
+          placeholder="Enter amount paid"
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Transaction / Reference number
+
+        <input
+          id="paymentReference"
+          type="text"
+          required
+          placeholder="Enter transaction reference"
+        >
+
+      </label>
+
+
+
+      <label>
+
+        Your phone number or email
+
+        <input
+          id="paymentIdentifier"
+          type="text"
+          required
+          placeholder="Enter your number or email"
+        >
+
+      </label>
+
+
+
+      <button
+        id="paymentButton"
+        class="button"
+        type="submit"
+      >
+        Submit payment
+      </button>
+
+
+
+      <p
+        id="paymentMessage"
+        class="form-message"
+        role="status"
+      ></p>
+
+
+    </form>
+
+  </section>
+
+
+
+  <!-- SUCCESS -->
+
+  <section
+    id="paymentSuccess"
+    class="admin-section"
+    style="display:none;"
+  >
+
+    <h2>
+      Payment submitted ✓
+    </h2>
+
+    <p>
+      Your payment has been submitted for verification.
+    </p>
+
+    <p>
+      Order:
+      <strong id="successOrder"></strong>
+    </p>
+
+    <p>
+      Please keep your transaction reference.
+      Your subscription will be activated after
+      payment verification and account assignment.
+    </p>
+
+  </section>
+
+
+</main>
+
+
+
+<script
+  type="module"
+  src="js/payment.js"
+></script>
+
+
+</body>
+
+</html>

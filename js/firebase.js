@@ -22,12 +22,24 @@ import {
 // ============================================================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA09R5oFLuSPRzLc58dUHamFW0NB8P2M1Q",
-  authDomain: "lets-trade-zm-488d9.firebaseapp.com",
-  projectId: "lets-trade-zm-488d9",
-  storageBucket: "lets-trade-zm-488d9.firebasestorage.app",
-  messagingSenderId: "702125763072",
-  appId: "1:702125763072:web:c6b6114b2a23cdb89e06e5"
+
+  apiKey:
+    "AIzaSyA09R5oFLuSPRzLc58dUHamFW0NB8P2M1Q",
+
+  authDomain:
+    "lets-trade-zm-488d9.firebaseapp.com",
+
+  projectId:
+    "lets-trade-zm-488d9",
+
+  storageBucket:
+    "lets-trade-zm-488d9.firebasestorage.app",
+
+  messagingSenderId:
+    "702125763072",
+
+  appId:
+    "1:702125763072:web:c6b6114b2a23cdb89e06e5"
 };
 
 
@@ -35,26 +47,41 @@ const firebaseConfig = {
 // INITIALIZE FIREBASE
 // ============================================================
 
-const app = initializeApp(firebaseConfig);
+const app =
+  initializeApp(firebaseConfig);
 
 
 // ============================================================
-// FIREBASE SERVICES
+// FIRESTORE
 // ============================================================
 
-const db = getFirestore(app);
-const auth = getAuth(app);
+export const db =
+  getFirestore(app);
 
 
 // ============================================================
-// EXPORT SERVICES
+// FIREBASE AUTHENTICATION
+// ============================================================
+
+export const auth =
+  getAuth(app);
+
+
+// ============================================================
+// AUTH STATE LISTENER
 // ============================================================
 
 export {
-  app,
-  db,
-  auth,
   onAuthStateChanged
+};
+
+
+// ============================================================
+// FIREBASE APP
+// ============================================================
+
+export {
+  app
 };
 
 
@@ -70,7 +97,7 @@ export const firebaseAppId =
 
 
 // ============================================================
-// DEBUG
+// DEBUG INFORMATION
 // ============================================================
 
 console.log(

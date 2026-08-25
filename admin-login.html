@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Admin Login | Let's Trade ZM</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+  <a
+    href="index.html"
+    class="logo"
+  >
+    <span>Let's</span> Trade ZM
+  </a>
+
+  <nav>
+
+    <a href="index.html">
+      Customer Site
+    </a>
+
+  </nav>
+
+</header>
+
+
+<main class="page">
+
+  <section class="checkout-panel">
+
+    <p class="eyebrow">
+      ADMINISTRATION
+    </p>
+
+    <h1>
+      Admin <em>Login.</em>
+    </h1>
+
+    <p class="intro">
+      Sign in to access the Let's Trade ZM management portal.
+    </p>
+
+
+    <form id="adminLoginForm">
+
+      <label>
+
+        Email address
+
+        <input
+          id="adminEmail"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="admin@example.com"
+        >
+
+      </label>
+
+
+      <label>
+
+        Password
+
+        <input
+          id="adminPassword"
+          type="password"
+          required
+          autocomplete="current-password"
+          placeholder="Enter your password"
+        >
+
+      </label>
+
+
+      <button
+        id="adminLoginButton"
+        class="button"
+        type="submit"
+      >
+        Sign in
+      </button>
+
+
+      <p
+        id="adminLoginMessage"
+        class="form-message"
+        role="status"
+      ></p>
+
+    </form>
+
+  </section>
+
+</main>
+
+
+<script
+  type="module"
+  src="js/admin-login.js"
+></script>
+
+</body>
+
+</html>

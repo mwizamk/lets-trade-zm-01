@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Let's Trade ZM — Admin</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 16px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 21px;
+    }
+
+    #adminStatus {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+    }
+
+    nav button {
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #e5e7eb;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    nav button.active {
+      background: #111827;
+      color: white;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #111827;
+      color: white;
+      border: 0;
+      padding: 11px 16px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+      border: 0;
+      padding: 9px 13px;
+      border-radius: 7px;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      border: 0;
+      padding: 9px 13px;
+      border-radius: 7px;
+    }
+
+    .admin-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: flex-start;
+    }
+
+    .admin-card p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: #e5e7eb;
+      font-size: 12px;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 7px rgba(0,0,0,.05);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      margin-top: 5px;
+    }
+
+    @media(max-width:600px) {
+      .admin-card {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <h1>Let's Trade ZM — Admin Portal</h1>
+
+  <div id="adminStatus">
+    Checking administrator access...
+  </div>
+
+</header>
+
+<nav>
+
+  <button
+    class="nav-button active"
+    data-section="overview"
+  >
+    Overview
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="pricelist"
+  >
+    PriceList
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="orders"
+  >
+    Orders
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="payments"
+  >
+    Payments
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="clients"
+  >
+    Customers
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="subscriptions"
+  >
+    Subscriptions
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="accounts"
+  >
+    Accounts
+  </button>
+
+  <button
+    class="nav-button"
+    data-section="assignment"
+  >
+    Assignment
+  </button>
+
+  <button
+    id="logoutButton"
+  >
+    Logout
+  </button>
+
+</nav>
+
+<main>
+
+  <div
+    id="adminMessage"
+    class="message"
+  ></div>
+
+
+  <!-- ======================================================
+       OVERVIEW
+  ======================================================= -->
+
+  <section
+    id="section-overview"
+    class="section active"
+  >
+
+    <div class="panel">
+
+      <h2>Dashboard</h2>
+
+      <p>
+        Welcome to the Let's Trade ZM administration portal.
+      </p>
+
+      <div class="stats">
+
+        <div class="stat">
+          PriceList
+          <strong id="statPrices">0</strong>
+        </div>
+
+        <div class="stat">
+          Orders
+          <strong id="statOrders">0</strong>
+        </div>
+
+        <div class="stat">
+          Payments
+          <strong id="statPayments">0</strong>
+        </div>
+
+        <div class="stat">
+          Customers
+          <strong id="statClients">0</strong>
+        </div>
+
+        <div class="stat">
+          Subscriptions
+          <strong id="statSubscriptions">0</strong>
+        </div>
+
+        <div class="stat">
+          Accounts
+          <strong id="statAccounts">0</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       PRICELIST
+  ======================================================= -->
+
+  <section
+    id="section-pricelist"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>PriceList</h2>
+
+      <p>
+        Manage the services displayed to customers.
+      </p>
+
+      <button
+        id="seedPriceList"
+        class="primary"
+        type="button"
+      >
+        Seed / Update 23 Products
+      </button>
+
+      <button
+        id="refreshPrices"
+        class="secondary"
+        type="button"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Add / Edit Product</h2>
+
+      <form id="priceForm">
+
+        <input
+          type="hidden"
+          id="priceId"
+        >
+
+        <div class="grid">
+
+          <div>
+            <label>Service</label>
+
+            <input
+              id="service"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Package</label>
+
+            <input
+              id="packageName"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Ownership</label>
+
+            <select id="ownership">
+
+              <option value="shared">
+                Shared
+              </option>
+
+              <option value="private">
+                Private
+              </option>
+
+            </select>
+          </div>
+
+          <div>
+            <label>Price (K)</label>
+
+            <input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Duration</label>
+
+            <input
+              id="duration"
+              value="Monthly"
+            >
+          </div>
+
+          <div>
+            <label>Status</label>
+
+            <select id="priceStatus">
+
+              <option value="active">
+                Active
+              </option>
+
+              <option value="inactive">
+                Inactive
+              </option>
+
+            </select>
+          </div>
+
+        </div>
+
+        <br>
+
+        <label>Description</label>
+
+        <textarea
+          id="description"
+        ></textarea>
+
+        <br>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Save Product
+        </button>
+
+        <button
+          id="cancelPriceEdit"
+          class="secondary"
+          type="button"
+        >
+          Clear
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Products</h2>
+
+      <div id="adminPrices">
+        Loading...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       ORDERS
+  ======================================================= -->
+
+  <section
+    id="section-orders"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Orders</h2>
+
+      <button
+        id="refreshOrders"
+        class="secondary"
+        type="button"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+    <div
+      class="panel"
+      id="adminOrders"
+    >
+      Loading...
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       PAYMENTS
+  ======================================================= -->
+
+  <section
+    id="section-payments"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Payment Verification</h2>
+
+      <button
+        id="refreshPayments"
+        class="secondary"
+        type="button"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+    <div
+      class="panel"
+      id="adminPayments"
+    >
+      Loading...
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       CLIENTS
+  ======================================================= -->
+
+  <section
+    id="section-clients"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Customers</h2>
+
+      <button
+        id="refreshClients"
+        class="secondary"
+        type="button"
+      >
+        Refresh
+      </button>
+
+    </div>
+
+    <div
+      class="panel"
+      id="adminClients"
+    >
+      Loading...
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       SUBSCRIPTIONS
+  ======================================================= -->
+
+  <section
+    id="section-subscriptions"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Create Subscription</h2>
+
+      <form id="subscriptionForm">
+
+        <div class="grid">
+
+          <div>
+            <label>Order ID</label>
+
+            <input
+              id="subscriptionOrderId"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Customer UID</label>
+
+            <input
+              id="subscriptionCustomerUid"
+            >
+          </div>
+
+          <div>
+            <label>Service</label>
+
+            <input
+              id="subscriptionService"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Package</label>
+
+            <input
+              id="subscriptionPackage"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Start Date</label>
+
+            <input
+              id="startDate"
+              type="date"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Expiry Date</label>
+
+            <input
+              id="expiryDate"
+              type="date"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Status</label>
+
+            <select id="subscriptionStatus">
+
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="active">
+                Active
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Create Subscription
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Subscriptions</h2>
+
+      <div id="adminSubscriptions">
+        Loading...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       ACCOUNTS
+  ======================================================= -->
+
+  <section
+    id="section-accounts"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Service Accounts</h2>
+
+      <form id="accountForm">
+
+        <input
+          type="hidden"
+          id="accountId"
+        >
+
+        <div class="grid">
+
+          <div>
+            <label>Service</label>
+
+            <input
+              id="accountService"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Account Label</label>
+
+            <input
+              id="accountLabel"
+              placeholder="e.g. Netflix Premium #1"
+              required
+            >
+          </div>
+
+          <div>
+            <label>Status</label>
+
+            <select id="accountStatus">
+
+              <option value="available">
+                Available
+              </option>
+
+              <option value="assigned">
+                Assigned
+              </option>
+
+              <option value="disabled">
+                Disabled
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Save Account
+        </button>
+
+        <button
+          id="cancelAccountEdit"
+          class="secondary"
+          type="button"
+        >
+          Clear
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Accounts</h2>
+
+      <div id="adminAccounts">
+        Loading...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       ACCOUNT ASSIGNMENT
+  ======================================================= -->
+
+  <section
+    id="section-assignment"
+    class="section"
+  >
+
+    <div class="panel">
+
+      <h2>Assign Account</h2>
+
+      <p>
+        Assign an available service account to a paid
+        subscription.
+      </p>
+
+      <form id="assignmentForm">
+
+        <label>
+          Subscription
+        </label>
+
+        <select
+          id="assignmentSubscription"
+          required
+        >
+
+          <option value="">
+            Choose subscription
+          </option>
+
+        </select>
+
+        <br><br>
+
+        <label>
+          Available Account
+        </label>
+
+        <select
+          id="assignmentAccount"
+          required
+        >
+
+          <option value="">
+            Choose account
+          </option>
+
+        </select>
+
+        <br>
+
+        <button
+          class="primary"
+          type="submit"
+        >
+          Assign Account
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script type="module" src="js/admin.js"></script>
+
+</body>
+</html>

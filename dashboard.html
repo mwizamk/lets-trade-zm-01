@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let's Trade ZM | Customer Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard-page">
+
+<header class="dashboard-header">
+  <a href="index.html" class="logo"><span>Let's</span> Trade ZM</a>
+  <div class="dashboard-actions">
+    <span id="customerName">Customer</span>
+    <button id="logoutButton" class="secondary-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="dashboard-container">
+
+  <section class="dashboard-welcome">
+    <span class="eyebrow">CUSTOMER DASHBOARD</span>
+    <h1>Hello, <span id="welcomeName">Customer</span></h1>
+    <p>View your subscriptions and account information below.</p>
+  </section>
+
+  <div id="dashboardMessage" class="form-message"></div>
+
+  <section class="dashboard-grid">
+    <article class="dashboard-stat">
+      <span>Subscriptions</span>
+      <strong id="subscriptionCount">0</strong>
+    </article>
+    <article class="dashboard-stat">
+      <span>Active</span>
+      <strong id="activeCount">0</strong>
+    </article>
+    <article class="dashboard-stat">
+      <span>Expiring soon</span>
+      <strong id="expiringCount">0</strong>
+    </article>
+  </section>
+
+  <section class="dashboard-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">MY SERVICES</span>
+        <h2>Subscriptions</h2>
+      </div>
+      <a href="index.html#prices" class="primary-btn">Add service</a>
+    </div>
+
+    <div id="subscriptionsList" class="subscription-list">
+      <div class="loading-card">Loading your subscriptions...</div>
+    </div>
+  </section>
+
+  <section class="dashboard-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="eyebrow">ACCOUNT</span>
+        <h2>My details</h2>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <div><span>Name</span><strong id="detailName">—</strong></div>
+      <div><span>Phone</span><strong id="detailPhone">—</strong></div>
+      <div><span>Email</span><strong id="detailEmail">—</strong></div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,20 +1,118 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
   <title>Let's Trade ZM — Firebase Setup</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 </head>
 
 <body>
-  <h1>Let's Trade ZM Firebase Setup</h1>
 
-  <p id="status">Starting setup...</p>
+<header class="navbar">
 
-  <button id="runSetup">
-    Create database structure
-  </button>
+  <a
+    class="logo"
+    href="index.html"
+  >
+    <span>Let's</span> Trade ZM
+  </a>
 
-  <script type="module" src="js/setup.js"></script>
+</header>
+
+
+<main class="page">
+
+  <p class="eyebrow">
+    FIREBASE SETUP
+  </p>
+
+  <h1>
+    Database <em>setup.</em>
+  </h1>
+
+  <p class="intro">
+    This tool creates the initial Let's Trade ZM
+    Firestore structure automatically.
+  </p>
+
+
+  <section class="admin-section">
+
+    <h2>
+      Firebase project
+    </h2>
+
+    <p id="projectStatus">
+      Checking Firebase connection...
+    </p>
+
+    <div id="projectInfo"></div>
+
+  </section>
+
+
+  <section class="admin-section">
+
+    <h2>
+      Database structure
+    </h2>
+
+    <p>
+      You do not need to manually create every collection.
+      Click the button below once.
+    </p>
+
+    <button
+      id="setupButton"
+      class="button"
+      type="button"
+    >
+      Create database structure
+    </button>
+
+    <div
+      id="setupStatus"
+      class="form-message"
+      role="status"
+      style="margin-top:20px;"
+    ></div>
+
+  </section>
+
+
+  <section
+    class="admin-section"
+    id="results"
+    style="display:none;"
+  >
+
+    <h2>
+      Setup results
+    </h2>
+
+    <div id="resultList"></div>
+
+  </section>
+
+</main>
+
+
+<script
+  type="module"
+  src="setup.js"
+></script>
+
 </body>
+
 </html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Let's Trade ZM — Import PriceList</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+</head>
+
+<body>
+
+<header class="navbar">
+
+  <a
+    class="logo"
+    href="index.html"
+  >
+    <span>Let's</span> Trade ZM
+  </a>
+
+</header>
+
+
+<main class="page">
+
+  <p class="eyebrow">
+    FIREBASE
+  </p>
+
+  <h1>
+    Import <em>PriceList.</em>
+  </h1>
+
+  <p class="intro">
+    This temporary tool copies the existing PriceList
+    from data.js into Firebase Firestore.
+  </p>
+
+
+  <section class="admin-section">
+
+    <p id="status">
+      Ready.
+    </p>
+
+    <button
+      id="importButton"
+      class="button"
+      type="button"
+    >
+      Import PriceList to Firebase
+    </button>
+
+    <div
+      id="results"
+      style="margin-top:20px;"
+    ></div>
+
+  </section>
+
+</main>
+
+
+<script
+  type="module"
+  src="import-pricelist.js"
+></script>
+
+</body>
+
+</html>

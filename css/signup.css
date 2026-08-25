@@ -1,0 +1,69 @@
+/* Signup page-specific styling.
+   Shared buttons, typography and layout remain in style.css. */
+
+.signup-page {
+  background: #f5f7fb;
+}
+
+.signup-container {
+  width: min(900px, 92%);
+  margin: 0 auto;
+  padding: 35px 0 60px;
+}
+
+.signup-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 3px 14px rgba(0,0,0,.06);
+}
+
+.selected-product {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.selected-product h2 {
+  margin: 5px 0;
+}
+
+.signup-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.signup-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.signup-form input,
+.signup-form select,
+.signup-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+}
+
+@media (max-width: 650px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .signup-card {
+    padding: 18px;
+  }
+}

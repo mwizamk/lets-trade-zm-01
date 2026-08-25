@@ -1,0 +1,170 @@
+body.dashboard-page {
+  background: #f5f7fb;
+}
+
+.dashboard-header {
+  min-height: 70px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  background: #111827;
+  color: #fff;
+}
+
+.dashboard-header .logo {
+  color: #fff;
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-container {
+  width: min(1100px, 92%);
+  margin: 0 auto;
+  padding: 35px 0 60px;
+}
+
+.dashboard-welcome {
+  margin-bottom: 24px;
+}
+
+.dashboard-welcome h1 {
+  margin: 8px 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.dashboard-stat,
+.dashboard-panel {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 3px 14px rgba(0,0,0,.06);
+}
+
+.dashboard-stat span,
+.details-grid span,
+.subscription-details span {
+  display: block;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.dashboard-stat strong {
+  display: block;
+  font-size: 28px;
+  margin-top: 5px;
+}
+
+.dashboard-panel {
+  margin-bottom: 20px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.panel-heading h2 {
+  margin: 5px 0 0;
+}
+
+.subscription-list {
+  display: grid;
+  gap: 14px;
+}
+
+.subscription-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.subscription-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.subscription-title h3 {
+  margin: 0;
+}
+
+.service-badge {
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #eef2ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.subscription-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.subscription-details strong {
+  display: block;
+  margin-top: 5px;
+}
+
+.account-notice {
+  margin-top: 16px;
+  padding: 11px;
+  border-radius: 8px;
+  background: #ecfdf5;
+  font-size: 13px;
+}
+
+.account-notice.pending {
+  background: #fffbeb;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.details-grid strong {
+  display: block;
+  margin-top: 5px;
+}
+
+@media (max-width: 700px) {
+  .dashboard-header {
+    padding: 12px 4%;
+  }
+
+  .dashboard-grid,
+  .subscription-details,
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}

@@ -1,201 +1,353 @@
-let currentStep = 1;
+// ============================================================
+// LET'S TRADE ZM
+// Signup / PriceList / Cart / Order
+// ============================================================
 
-/*
-  MULTIPLE PRODUCT CART
-*/
+import {
+  db
+} from "./firebase.js";
+
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  setDoc,
+  doc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+const $ = (id) =>
+  document.getElementById(id);
+
+
+const money = (amount) =>
+  `K${Number(amount || 0).toFixed(2)}`;
+
+
+const safe = (value) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]
+  );
+
+
+const isEmail = value =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+
+const normalize =
+  value => value.trim().toLowerCase();
+
+
+// ============================================================
+// CART
+// ============================================================
+
 let cart = [];
 
-const signupState = {
-  products: [],
-  customer: {},
-  payment: null
-};
+try {
 
-
-/*
-  START
-*/
-document.addEventListener("DOMContentLoaded", () => {
-  renderProducts();
-  setupFilters();
-  setupNavigation();
-  setupURLProduct();
-  renderSelectionCart();
-});
-
-
-/*
-  RENDER PRODUCTS
-*/
-function renderProducts(filter = "all") {
-
-  const container = document.getElementById("signupProducts");
-
-  if (!container) return;
-
-  let products = Array.isArray(PRICE_LIST)
-    ? PRICE_LIST.filter(p => p.status === "active")
-    : [];
-
-  if (filter !== "all") {
-    products = products.filter(
-      p => String(p.ownership).toLowerCase() === filter
-    );
-  }
-
-  container.innerHTML = products.map(product => {
-
-    const isSelected = cart.some(
-      item => Number(item.id) === Number(product.id)
+  cart =
+    JSON.parse(
+      localStorage.getItem("ltz_cart") || "[]"
     );
 
-    return `
-      <button
-        class="product-card ${isSelected ? "selected" : ""}"
-        data-id="${product.id}"
-        type="button"
-      >
+} catch {
 
-        <div class="product-top">
-          <span>${product.ownership}</span>
-          <span>${product.duration}</span>
-        </div>
+  cart = [];
 
-        <h3>${product.service}</h3>
-
-        <p>${product.package}</p>
-
-        <strong>K${product.price}</strong>
-
-        <span class="cart-button-text">
-          ${isSelected ? "✓ Added to Cart" : "＋ Add to Cart"}
-        </span>
-
-      </button>
-    `;
-
-  }).join("");
-
-
-  /*
-    PRODUCT CLICK
-  */
-  document
-    .querySelectorAll(".product-card")
-    .forEach(card => {
-
-      card.addEventListener("click", () => {
-
-        const id = Number(card.dataset.id);
-
-        toggleProduct(id);
-
-      });
-
-    });
 }
 
 
-/*
-  ADD / REMOVE PRODUCT
-*/
-function toggleProduct(id) {
+function saveCart() {
 
-  const existingIndex = cart.findIndex(
-    item => Number(item.id) === Number(id)
+  localStorage.setItem(
+    "ltz_cart",
+    JSON.stringify(cart)
   );
 
-
-  /*
-    REMOVE IF ALREADY IN CART
-  */
-  if (existingIndex !== -1) {
-
-    cart.splice(existingIndex, 1);
-
-  }
-
-  /*
-    OTHERWISE ADD IT
-  */
-  else {
-
-    const product = PRICE_LIST.find(
-      p => Number(p.id) === Number(id)
-    );
-
-    if (!product) return;
-
-    cart.push({
-      ...product
-    });
-
-  }
-
-
-  signupState.products = [...cart];
-
-  renderProducts(
-    document.querySelector(".filter.active")?.dataset.filter || "all"
-  );
-
-  renderSelectionCart();
-
-  updateServiceButton();
 }
 
 
-/*
-  UPDATE CONTINUE BUTTON
-*/
-function updateServiceButton() {
-
-  const button = document.getElementById("serviceNext");
-
-  if (!button) return;
-
-  button.disabled = cart.length === 0;
-
-  if (cart.length > 0) {
-
-    button.textContent =
-      `Continue (${cart.length} ${cart.length === 1 ? "item" : "items"})`;
-
-  }
-
-  else {
-
-    button.textContent = "Continue";
-
-  }
-}
-
-
-/*
-  CART TOTAL
-*/
-function getCartTotal() {
+function totalCart() {
 
   return cart.reduce(
-    (total, product) =>
-      total + Number(product.price || 0),
+    (total, item) =>
+      total +
+      Number(item.price || 0),
+
     0
   );
 
 }
 
 
-/*
-  STEP 1 CART PREVIEW
-*/
-function renderSelectionCart() {
+// ============================================================
+// FIREBASE PRICE LIST
+// ============================================================
 
-  const container = document.getElementById("selectionCart");
+async function loadPriceList() {
 
-  if (!container) return;
+  const container =
+    $("priceList");
+
+  const status =
+    $("firebaseStatus");
 
 
-  if (cart.length === 0) {
+  try {
+
+    const priceQuery =
+      query(
+        collection(db, "pricelist"),
+        where("status", "==", "active")
+      );
+
+
+    const snapshot =
+      await getDocs(priceQuery);
+
+
+    const products =
+      snapshot.docs
+        .map(document => ({
+          firestoreId: document.id,
+          ...document.data()
+        }))
+        .sort(
+          (a, b) =>
+            Number(a.id || 0) -
+            Number(b.id || 0)
+        );
+
+
+    if (!products.length) {
+
+      container.innerHTML =
+        `<p class="empty">
+          No services are currently available.
+        </p>`;
+
+      status.textContent =
+        "No active services found.";
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      products.map(product => `
+
+        <article class="price-card">
+
+          <div class="price-top">
+
+            <span>
+              ${safe(product.ownership)}
+            </span>
+
+            <span>
+              ${safe(product.duration)}
+            </span>
+
+          </div>
+
+
+          <h3>
+            ${safe(product.service)}
+          </h3>
+
+
+          <p>
+            ${safe(product.package)}
+          </p>
+
+
+          <div class="price">
+            ${money(product.price)}
+          </div>
+
+
+          <p class="description">
+            ${safe(product.description)}
+          </p>
+
+
+          <button
+            type="button"
+            class="card-btn add-service"
+            data-id="${safe(product.firestoreId)}"
+          >
+            Select
+          </button>
+
+        </article>
+
+      `).join("");
+
+
+    container
+      .querySelectorAll(".add-service")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const product =
+              products.find(
+                item =>
+                  item.firestoreId ===
+                  button.dataset.id
+              );
+
+
+            if (!product) return;
+
+
+            addToCart(
+              product
+            );
+
+
+            button.textContent =
+              "Selected ✓";
+
+          }
+        );
+
+      });
+
+
+    status.textContent =
+      `${products.length} services available.`;
+
+  } catch (error) {
+
+    console.error(
+      "PriceList error:",
+      error
+    );
+
+
+    status.textContent =
+      "Unable to load the PriceList from Firebase.";
+
+    container.innerHTML =
+      `<p class="empty">
+        Unable to load services.
+        Please try again.
+      </p>`;
+
+  }
+
+}
+
+
+// ============================================================
+// ADD TO CART
+// ============================================================
+
+function addToCart(product) {
+
+  const exists =
+    cart.some(
+      item =>
+        item.priceId ===
+        product.firestoreId
+    );
+
+
+  if (exists) {
+
+    return;
+
+  }
+
+
+  cart.push({
+
+    priceId:
+      product.firestoreId,
+
+    productId:
+      product.id,
+
+    ownership:
+      product.ownership,
+
+    service:
+      product.service,
+
+    package:
+      product.package,
+
+    price:
+      Number(product.price),
+
+    duration:
+      product.duration,
+
+    description:
+      product.description || "",
+
+    quantity:
+      1
+
+  });
+
+
+  saveCart();
+
+  renderCart();
+
+}
+
+
+// ============================================================
+// RENDER CART
+// ============================================================
+
+function renderCart() {
+
+  const section =
+    $("cartSection");
+
+  const container =
+    $("cartItems");
+
+  const count =
+    $("cartCount");
+
+  const total =
+    $("cartTotal");
+
+
+  count.textContent =
+    cart.length;
+
+
+  total.textContent =
+    money(totalCart());
+
+
+  if (!cart.length) {
+
+    section.hidden = true;
 
     container.innerHTML = "";
 
@@ -204,239 +356,71 @@ function renderSelectionCart() {
   }
 
 
-  container.innerHTML = `
-
-    <div class="cart-card">
-
-      <div>
-
-        <span class="cart-label">
-          YOUR CART
-        </span>
-
-        <h2>
-          ${cart.length}
-          ${cart.length === 1 ? "service" : "services"} selected
-        </h2>
-
-        <p>
-          Total: <strong>K${getCartTotal()}</strong>
-        </p>
-
-      </div>
-
-      <div class="cart-price">
-
-        <strong>
-          K${getCartTotal()}
-        </strong>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
+  section.hidden = false;
 
 
-/*
-  FILTERS
-*/
-function setupFilters() {
+  container.innerHTML =
+    cart.map((item, index) => `
 
-  document
-    .querySelectorAll(".filter")
+      <article class="cart-item">
+
+        <div>
+
+          <h3>
+            ${safe(item.service)}
+            —
+            ${safe(item.package)}
+          </h3>
+
+          <p>
+            ${safe(item.ownership)}
+            ·
+            ${safe(item.duration)}
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <strong>
+            ${money(item.price)}
+          </strong>
+
+
+          <button
+            type="button"
+            class="remove"
+            data-index="${index}"
+          >
+            Remove
+          </button>
+
+        </div>
+
+      </article>
+
+    `).join("");
+
+
+  container
+    .querySelectorAll(".remove")
     .forEach(button => {
 
-      button.addEventListener("click", () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        document
-          .querySelectorAll(".filter")
-          .forEach(item =>
-            item.classList.remove("active")
+          cart.splice(
+            Number(button.dataset.index),
+            1
           );
 
-        button.classList.add("active");
+          saveCart();
 
-        renderProducts(button.dataset.filter);
-
-      });
-
-    });
-
-}
-
-
-/*
-  NAVIGATION
-*/
-function setupNavigation() {
-
-  /*
-    STEP 1 -> STEP 2
-  */
-  document
-    .getElementById("serviceNext")
-    ?.addEventListener("click", () => {
-
-      if (cart.length === 0) return;
-
-      signupState.products = [...cart];
-
-      goToStep(2);
-
-    });
-
-
-  /*
-    NEXT BUTTONS
-  */
-  document
-    .querySelectorAll("[data-next]")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const nextStep =
-          Number(button.dataset.next);
-
-        /*
-          Don't allow empty cart
-        */
-        if (nextStep === 3 && cart.length === 0) {
-
-          alert("Please add at least one service to your cart.");
-
-          goToStep(1);
-
-          return;
+          renderCart();
 
         }
-
-        goToStep(nextStep);
-
-      });
-
-    });
-
-
-  /*
-    BACK BUTTONS
-  */
-  document
-    .querySelectorAll("[data-back]")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        goToStep(
-          Number(button.dataset.back)
-        );
-
-      });
-
-    });
-
-
-  /*
-    CUSTOMER DETAILS
-  */
-  document
-    .getElementById("detailsNext")
-    ?.addEventListener(
-      "click",
-      validateCustomer
-    );
-
-
-  /*
-    SUBMIT
-  */
-  document
-    .getElementById("submitOrder")
-    ?.addEventListener(
-      "click",
-      submitOrder
-    );
-
-}
-
-
-/*
-  CHANGE STEP
-*/
-function goToStep(step) {
-
-  /*
-    Cart
-  */
-  if (step === 2) {
-
-    renderCart();
-
-  }
-
-
-  /*
-    Payment summary
-  */
-  if (step === 4) {
-
-    renderPaymentSummary();
-
-  }
-
-
-  document
-    .querySelectorAll(".form-step")
-    .forEach(section =>
-      section.classList.remove("active")
-    );
-
-
-  document
-    .querySelector(
-      `.form-step[data-step="${step}"]`
-    )
-    ?.classList.add("active");
-
-
-  currentStep = step;
-
-  updateProgress();
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-}
-
-
-/*
-  PROGRESS BAR
-*/
-function updateProgress() {
-
-  const progress =
-    document.getElementById("progressBar");
-
-  if (progress) {
-
-    progress.style.width =
-      `${((currentStep - 1) / 4) * 100}%`;
-
-  }
-
-
-  document
-    .querySelectorAll(".progress-step")
-    .forEach((step, index) => {
-
-      step.classList.toggle(
-        "active",
-        index < currentStep
       );
 
     });
@@ -444,443 +428,349 @@ function updateProgress() {
 }
 
 
-/*
-  FULL CART - STEP 2
-*/
-function renderCart() {
+// ============================================================
+// CHECKOUT
+// ============================================================
 
-  const container =
-    document.getElementById("cartContainer");
+$("checkoutButton")
+  .addEventListener(
+    "click",
+    () => {
 
-  if (!container) return;
+      if (!cart.length) {
 
+        return;
 
-  if (cart.length === 0) {
-
-    container.innerHTML = `
-
-      <div class="cart-card">
-
-        <h2>Your cart is empty</h2>
-
-        <p>
-          Please go back and select a service.
-        </p>
-
-      </div>
-
-    `;
-
-    return;
-
-  }
+      }
 
 
-  const items = cart.map(product => `
-
-    <div
-      class="cart-card"
-      data-cart-id="${product.id}"
-    >
-
-      <div>
-
-        <span class="cart-label">
-          SELECTED SERVICE
-        </span>
-
-        <h2>
-          ${product.service}
-        </h2>
-
-        <p>
-          ${product.package}
-          ·
-          ${product.ownership}
-        </p>
-
-      </div>
+      $("customerSection").hidden =
+        false;
 
 
-      <div class="cart-price">
+      $("customerSection")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
 
-        <span>
-          ${product.duration}
-        </span>
-
-        <strong>
-          K${product.price}
-        </strong>
-
-        <button
-          type="button"
-          class="remove-cart-item"
-          data-remove-id="${product.id}"
-        >
-          Remove
-        </button>
-
-      </div>
-
-    </div>
-
-  `).join("");
-
-
-  container.innerHTML = `
-
-    ${items}
-
-    <div class="total-card">
-
-      <span>
-        Total
-      </span>
-
-      <strong>
-        K${getCartTotal()}
-      </strong>
-
-    </div>
-
-  `;
-
-
-  /*
-    REMOVE BUTTONS
-  */
-  container
-    .querySelectorAll(".remove-cart-item")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const id =
-          Number(button.dataset.removeId);
-
-        removeFromCart(id);
-
-      });
-
-    });
-
-}
-
-
-/*
-  REMOVE FROM CART
-*/
-function removeFromCart(id) {
-
-  cart = cart.filter(
-    product =>
-      Number(product.id) !== Number(id)
+    }
   );
 
 
-  signupState.products = [...cart];
+// ============================================================
+// CREATE CLIENT ID
+// ============================================================
+
+function clientIdFor(
+  identifier
+) {
+
+  const value =
+    normalize(identifier);
 
 
-  renderCart();
+  if (isEmail(value)) {
 
-  renderProducts(
-    document.querySelector(".filter.active")?.dataset.filter || "all"
-  );
-
-  renderSelectionCart();
-
-  updateServiceButton();
-
-
-  /*
-    If cart becomes empty,
-    return customer to Step 1
-  */
-  if (cart.length === 0) {
-
-    goToStep(1);
-
-  }
-
-}
-
-
-/*
-  CUSTOMER VALIDATION
-*/
-function validateCustomer() {
-
-  const form =
-    document.getElementById("customerForm");
-
-
-  if (!form.checkValidity()) {
-
-    form.reportValidity();
-
-    return;
+    return (
+      "email_" +
+      value.replace(
+        /[^a-z0-9]/g,
+        "_"
+      )
+    );
 
   }
 
 
-  signupState.customer = {
-
-    name:
-      document
-        .getElementById("customerName")
-        .value
-        .trim(),
-
-    phone:
-      document
-        .getElementById("customerPhone")
-        .value
-        .trim(),
-
-    email:
-      document
-        .getElementById("customerEmail")
-        .value
-        .trim()
-
-  };
-
-
-  goToStep(4);
-
-}
-
-
-/*
-  PAYMENT SUMMARY
-*/
-function renderPaymentSummary() {
-
-  const container =
-    document.getElementById("paymentSummary");
-
-  if (!container) return;
-
-
-  const productsHTML =
-    cart.map(product => `
-
-      <div>
-
-        <span>
-          ${product.service}
-          -
-          ${product.package}
-        </span>
-
-        <strong>
-          K${product.price}
-        </strong>
-
-      </div>
-
-    `).join("");
-
-
-  container.innerHTML = `
-
-    <div class="payment-summary">
-
-      <div>
-        <span>Selected services</span>
-        <strong>${cart.length}</strong>
-      </div>
-
-      ${productsHTML}
-
-      <div>
-        <span>Customer</span>
-        <strong>
-          ${signupState.customer.name}
-        </strong>
-      </div>
-
-      <div class="summary-total">
-
-        <span>Total</span>
-
-        <strong>
-          K${getCartTotal()}
-        </strong>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/*
-  SUBMIT ORDER
-*/
-function submitOrder() {
-
-  if (cart.length === 0) {
-
-    alert(
-      "Your cart is empty. Please select at least one service."
-    );
-
-    goToStep(1);
-
-    return;
-
-  }
-
-
-  const payment =
-    document.querySelector(
-      'input[name="payment"]:checked'
-    );
-
-
-  signupState.payment =
-    payment?.value || "mobile_money";
-
-
-  /*
-    Generate customer code
-  */
-  const code =
-    Math.floor(
-      1000 + Math.random() * 9000
-    ).toString();
-
-
-  /*
-    MULTI-PRODUCT ORDER
-  */
-  const order = {
-
-    orderId:
-      "LTZ-" + Date.now(),
-
-    products:
-      cart.map(product => ({
-        id: product.id,
-        service: product.service,
-        package: product.package,
-        ownership: product.ownership,
-        price: Number(product.price),
-        duration: product.duration
-      })),
-
-    total:
-      getCartTotal(),
-
-    customer:
-      signupState.customer,
-
-    payment:
-      signupState.payment,
-
-    customerCode:
-      code,
-
-    status:
-      "pending",
-
-    createdAt:
-      new Date().toISOString()
-
-  };
-
-
-  /*
-    Keep the latest order
-  */
-  localStorage.setItem(
-    "latestOrder",
-    JSON.stringify(order)
-  );
-
-
-  localStorage.setItem(
-    "customerCode",
-    code
-  );
-
-
-  /*
-    Display code
-  */
-  const generatedCode =
-    document.getElementById("generatedCode");
-
-  if (generatedCode) {
-
-    generatedCode.textContent = code;
-
-  }
-
-
-  /*
-    Go to success page
-  */
-  goToStep(5);
-
-}
-
-
-/*
-  URL PRODUCT SUPPORT
-  Example:
-  signup.html?product=1
-*/
-function setupURLProduct() {
-
-  const id =
-    Number(
-      new URLSearchParams(location.search)
-        .get("product")
-    );
-
-
-  if (!id) return;
-
-
-  const product =
-    PRICE_LIST.find(
-      p => Number(p.id) === id
-    );
-
-
-  if (!product) return;
-
-
-  /*
-    Automatically add URL product
-    to the cart instead of replacing it.
-  */
-  if (
-    !cart.some(
-      item => Number(item.id) === id
+  return (
+    "phone_" +
+    value.replace(
+      /[^a-z0-9]/g,
+      ""
     )
-  ) {
-
-    cart.push({
-      ...product
-    });
-
-  }
-
-
-  signupState.products = [...cart];
-
-
-  renderProducts(
-    document.querySelector(".filter.active")?.dataset.filter || "all"
   );
 
-  renderSelectionCart();
-
-  updateServiceButton();
-
 }
+
+
+// ============================================================
+// SUBMIT ORDER
+// ============================================================
+
+$("orderForm")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const name =
+        $("customerName")
+          .value
+          .trim();
+
+
+      const identifier =
+        normalize(
+          $("customerIdentifier")
+            .value
+        );
+
+
+      const email =
+        $("customerEmail")
+          .value
+          .trim();
+
+
+      const message =
+        $("orderMessage");
+
+
+      const button =
+        $("submitOrder");
+
+
+      if (!cart.length) {
+
+        message.textContent =
+          "Please select at least one service.";
+
+        return;
+
+      }
+
+
+      if (!name || !identifier) {
+
+        message.textContent =
+          "Please enter your name and phone number or email.";
+
+        return;
+
+      }
+
+
+      if (
+        identifier.includes("@") &&
+        !isEmail(identifier)
+      ) {
+
+        message.textContent =
+          "Please enter a valid email address.";
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Creating order...";
+
+
+      try {
+
+        const clientId =
+          clientIdFor(
+            identifier
+          );
+
+
+        const customerEmail =
+          isEmail(identifier)
+            ? identifier
+            : email;
+
+
+        const phone =
+          isEmail(identifier)
+            ? ""
+            : identifier.replace(
+                /\s+/g,
+                ""
+              );
+
+
+        // ----------------------------------------------------
+        // CUSTOMER
+        // ----------------------------------------------------
+
+        await setDoc(
+          doc(
+            db,
+            "clients",
+            clientId
+          ),
+          {
+
+            name,
+
+            phone,
+
+            email:
+              customerEmail,
+
+            identifier,
+
+            updatedAt:
+              serverTimestamp(),
+
+            createdAt:
+              serverTimestamp()
+
+          },
+          {
+            merge: true
+          }
+        );
+
+
+        // ----------------------------------------------------
+        // ORDER
+        // ----------------------------------------------------
+
+        const order =
+          await addDoc(
+            collection(
+              db,
+              "orders"
+            ),
+            {
+
+              clientId,
+
+              customer: {
+
+                name,
+
+                phone,
+
+                email:
+                  customerEmail,
+
+                identifier
+
+              },
+
+
+              items:
+                cart.map(
+                  item => ({
+
+                    priceId:
+                      item.priceId,
+
+                    service:
+                      item.service,
+
+                    package:
+                      item.package,
+
+                    ownership:
+                      item.ownership,
+
+                    price:
+                      item.price,
+
+                    duration:
+                      item.duration,
+
+                    quantity:
+                      1
+
+                  })
+                ),
+
+
+              total:
+                totalCart(),
+
+
+              paymentStatus:
+                "pending",
+
+
+              orderStatus:
+                "pending",
+
+
+              createdAt:
+                serverTimestamp(),
+
+              updatedAt:
+                serverTimestamp()
+
+            }
+          );
+
+
+        // ----------------------------------------------------
+        // CLEAR CART
+        // ----------------------------------------------------
+
+        cart = [];
+
+        saveCart();
+
+
+        // ----------------------------------------------------
+        // NEXT STEP
+        // ----------------------------------------------------
+
+        message.textContent =
+          "Order created successfully.";
+
+
+        button.textContent =
+          "Order created ✓";
+
+
+        // Temporary destination.
+        // We will replace this with the real payment
+        // workflow in the next stage.
+
+        setTimeout(
+          () => {
+
+            window.location.href =
+              `index.html?order=${encodeURIComponent(order.id)}`;
+
+          },
+          1000
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Order creation error:",
+          error
+        );
+
+
+        message.textContent =
+          "Unable to create your order: " +
+          error.message;
+
+
+        button.disabled = false;
+
+        button.textContent =
+          "Continue to payment →";
+
+      }
+
+    }
+  );
+
+
+// ============================================================
+// START
+// ============================================================
+
+renderCart();
+
+loadPriceList();

@@ -1,3 +1,8 @@
+// ============================================================
+// LET'S TRADE ZM
+// FIREBASE CONFIGURATION
+// ============================================================
+
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
@@ -10,44 +15,64 @@ import {
   getAuth
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-
 // ============================================================
-// FIREBASE CONFIGURATION
+// FIREBASE CONFIG
+// ============================================================
+//
+// IMPORTANT:
+// Replace ONLY the values below with the values from:
+//
+// Firebase Console
+// → Project settings
+// → General
+// → Your apps
+// → Web app
+//
+// Project ID must remain:
+// lets-trade-zm-488d
+//
+// Do NOT put a Firebase Admin SDK private key here.
+// Do NOT put a service-account JSON file here.
+// Do NOT put a password here.
+//
 // ============================================================
 
 const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
 
-  // KEEP YOUR EXISTING VALUES HERE
-  // Do not use the example values below.
+  authDomain:
+    "lets-trade-zm-488d.firebaseapp.com",
 
-  apiKey: "YOUR_EXISTING_API_KEY",
-  authDomain: "YOUR_EXISTING_AUTH_DOMAIN",
-  projectId: "lets-trade-zm-488d9",
-  storageBucket: "YOUR_EXISTING_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_EXISTING_MESSAGING_SENDER_ID",
-  appId: "YOUR_EXISTING_APP_ID"
+  projectId:
+    "lets-trade-zm-488d",
 
+  storageBucket:
+    "YOUR_FIREBASE_STORAGE_BUCKET",
+
+  messagingSenderId:
+    "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+
+  appId:
+    "YOUR_FIREBASE_APP_ID"
 };
-
 
 // ============================================================
 // INITIALIZE FIREBASE
 // ============================================================
 
-const app =
-  initializeApp(firebaseConfig);
-
+const app = initializeApp(firebaseConfig);
 
 // ============================================================
-// SERVICES
+// FIRESTORE
 // ============================================================
 
-const db =
-  getFirestore(app);
+const db = getFirestore(app);
 
-const auth =
-  getAuth(app);
+// ============================================================
+// FIREBASE AUTHENTICATION
+// ============================================================
 
+const auth = getAuth(app);
 
 // ============================================================
 // EXPORT

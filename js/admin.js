@@ -1,3 +1,112 @@
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+// ============================================================
+// ADMIN AUTHORIZATION GUARD
+// ============================================================
+
+function requireAdmin() {
+
+  return new Promise((resolve, reject) => {
+
+    onAuthStateChanged(
+      auth,
+      async (user) => {
+
+        if (!user) {
+
+          window.location.href =
+            "admin-login.html";
+
+          return;
+
+        }
+
+
+        try {
+
+          const adminSnapshot =
+            await getDoc(
+              doc(
+                db,
+                "admins",
+                user.uid
+              )
+            );
+
+
+          if (!adminSnapshot.exists()) {
+
+            await signOut(auth);
+
+            window.location.href =
+              "admin-login.html";
+
+            return;
+
+          }
+
+
+          const admin =
+            adminSnapshot.data();
+
+
+          if (
+            admin.role !== "admin" ||
+            admin.active !== true
+          ) {
+
+            await signOut(auth);
+
+            window.location.href =
+              "admin-login.html";
+
+            return;
+
+          }
+
+
+          const status =
+            $("adminStatus");
+
+
+          if (status) {
+
+            status.textContent =
+              `Administrator authenticated: ${user.email}`;
+
+            status.style.color =
+              "green";
+
+          }
+
+
+          resolve(user);
+
+        } catch (error) {
+
+          console.error(
+            "Admin authorization error:",
+            error
+          );
+
+
+          await signOut(auth);
+
+          window.location.href =
+            "admin-login.html";
+
+        }
+
+      }
+    );
+
+  });
+
+}
+
 // ============================================================
 // LET'S TRADE ZM
 // ADMIN PORTAL

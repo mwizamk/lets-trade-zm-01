@@ -1,0 +1,326 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================================
+    // ADMIN AUTHORIZATION
+    // ==========================================================
+    //
+    // Admin document:
+    //
+    // /admins/{uid}
+    //
+    // {
+    //   role: "admin",
+    //   active: true
+    // }
+    //
+    // ==========================================================
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(
+          /databases/$(database)/documents/admins/$(request.auth.uid)
+        )
+        && get(
+          /databases/$(database)/documents/admins/$(request.auth.uid)
+        ).data.role == "admin"
+        && get(
+          /databases/$(database)/documents/admins/$(request.auth.uid)
+        ).data.active == true;
+    }
+
+
+    // ==========================================================
+    // ADMINS
+    // ==========================================================
+    //
+    // An administrator may read administrator records.
+    //
+    // IMPORTANT:
+    // Admin records cannot be created/modified/deleted from the
+    // normal admin web application.
+    //
+    // This prevents an administrator from simply granting
+    // another account admin privileges from the browser.
+    //
+    // Create the first admin manually from Firebase Console.
+    //
+    // ==========================================================
+
+    match /admins/{uid} {
+
+      allow read: if isAdmin();
+
+      allow create, update, delete: if false;
+    }
+
+
+    // ==========================================================
+    // PRICELIST
+    // ==========================================================
+    //
+    // Customers need to read active products.
+    // Only administrators may create/update/delete products.
+    //
+    // ==========================================================
+
+    match /pricelist/{document} {
+
+      allow read: if
+        resource.data.sub_status == "active"
+        || resource.data.status == "active"
+        || isAdmin();
+
+      allow create, update, delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // ORDERS
+    // ==========================================================
+    //
+    // Customers may create an order.
+    // Customers may read only their own order when a customer UID
+    // exists on the document.
+    //
+    // Administrators have full access.
+    //
+    // ==========================================================
+
+    match /orders/{orderId} {
+
+      allow create: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow read: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow update: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+          &&
+          request.resource.data.customerUid ==
+            resource.data.customerUid
+        );
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // PAYMENTS
+    // ==========================================================
+    //
+    // A customer can submit a payment.
+    //
+    // Customers CANNOT approve/reject payments.
+    // Only administrators can change payment status.
+    //
+    // ==========================================================
+
+    match /payments/{paymentId} {
+
+      allow create: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow read: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow update: if
+        isAdmin();
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // CLIENTS
+    // ==========================================================
+    //
+    // Customer records contain personal information.
+    // Administrators have full access.
+    //
+    // Authenticated customers can access their own record when
+    // customerUid is stored.
+    //
+    // ==========================================================
+
+    match /clients/{clientId} {
+
+      allow create: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow read: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+        );
+
+      allow update: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+          &&
+          request.resource.data.customerUid ==
+            resource.data.customerUid
+        );
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // SUBSCRIPTIONS
+    // ==========================================================
+    //
+    // Only administrators can create/change/delete subscriptions.
+    //
+    // Customers may read their own subscriptions.
+    //
+    // ==========================================================
+
+    match /subscriptions/{subscriptionId} {
+
+      allow create, update, delete: if isAdmin();
+
+      allow read: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          resource.data.customerUid ==
+            request.auth.uid
+        );
+    }
+
+
+    // ==========================================================
+    // ACCOUNTS
+    // ==========================================================
+    //
+    // Netflix/Prime/Spotify/etc. account credentials are
+    // sensitive.
+    //
+    // ONLY administrators may access this collection.
+    //
+    // ==========================================================
+
+    match /accounts/{accountId} {
+
+      allow read, create, update, delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // USERS
+    // ==========================================================
+    //
+    // Customer profile records.
+    //
+    // A customer can access only their own UID document.
+    // Administrators have full access.
+    //
+    // ==========================================================
+
+    match /users/{uid} {
+
+      allow read: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.auth.uid == uid
+        );
+
+      allow create: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.auth.uid == uid
+        );
+
+      allow update: if
+        isAdmin()
+        ||
+        (
+          signedIn()
+          &&
+          request.auth.uid == uid
+        );
+
+      allow delete: if isAdmin();
+    }
+
+
+    // ==========================================================
+    // DENY EVERYTHING ELSE
+    // ==========================================================
+    //
+    // If we haven't explicitly allowed a collection above,
+    // nobody can access it.
+    //
+    // ==========================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

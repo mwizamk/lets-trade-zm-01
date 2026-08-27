@@ -74,10 +74,6 @@ Repository:
 
 https://github.com/mwizamk/lets-trade-zm-static-github
 
-Reference website:
-
-https://mwizamk.github.io/lets-trade-zm-static-github/
-
 ---
 
 # 4. Firebase Project

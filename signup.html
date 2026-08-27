@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Sign Up | Let's Trade ZM</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/signup.css">
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        Let's Trade ZM
+      </a>
+
+      <nav>
+        <a href="index.html">PriceList</a>
+        <a href="login.html">Sign In</a>
+        <a href="admin-login.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="signup-page">
+
+    <section class="signup-container">
+
+      <div class="signup-card">
+
+        <div class="signup-header">
+          <h1>Create Your Account</h1>
+          <p>
+            Enter your details below to continue with your subscription.
+          </p>
+        </div>
+
+
+        <!-- Selected product -->
+        <div id="selectedProduct" class="selected-product">
+          <p>Loading selected service...</p>
+        </div>
+
+
+        <!-- Signup form -->
+        <form id="signupForm">
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            >
+          </div>
+
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="e.g. 0971234567"
+              autocomplete="tel"
+              required
+            >
+
+            <small>
+              Use the phone number you will use for payment.
+            </small>
+          </div>
+
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email address"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+
+          <!-- Message area -->
+          <div
+            id="signupMessage"
+            class="signup-message"
+            role="alert"
+            aria-live="polite"
+          ></div>
+
+
+          <button
+            type="submit"
+            id="continueButton"
+            class="primary-button"
+          >
+            Continue to Payment
+          </button>
+
+        </form>
+
+
+        <div class="signup-footer">
+
+          <p>
+            Already have an account?
+            <a href="login.html">Sign in</a>
+          </p>
+
+          <p>
+            <a href="index.html">← Back to PriceList</a>
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="site-footer">
+    <p>
+      © 2026 Let's Trade ZM. All rights reserved.
+    </p>
+  </footer>
+
+
+  <!-- Firebase / application logic -->
+  <script type="module" src="js/signup.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Payment | Let's Trade ZM</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+
+      <a href="index.html" class="logo">
+        Let's Trade ZM
+      </a>
+
+      <nav>
+        <a href="index.html">PriceList</a>
+        <a href="login.html">Sign In</a>
+        <a href="admin-login.html">Admin</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <main class="page">
+
+    <section class="container">
+
+      <div class="form-card">
+
+        <div class="section-heading">
+          <span class="eyebrow">PAYMENT</span>
+
+          <h1>Complete Your Payment</h1>
+
+          <p>
+            Review your selected subscription and submit your payment details.
+          </p>
+        </div>
+
+
+        <!-- PAYMENT SUMMARY -->
+        <div id="paymentSummary" class="selected-product">
+          Loading your order...
+        </div>
+
+
+        <!-- PAYMENT FORM -->
+        <form id="paymentForm">
+
+          <div class="form-group">
+
+            <label for="paymentMethod">
+              Payment method
+            </label>
+
+            <select
+              id="paymentMethod"
+              name="paymentMethod"
+              required
+            >
+              <option value="">Select payment method</option>
+              <option value="Airtel Money">Airtel Money</option>
+              <option value="MTN Money">MTN Money</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="transactionRef">
+              Transaction reference
+            </label>
+
+            <input
+              type="text"
+              id="transactionRef"
+              name="transactionRef"
+              placeholder="Enter your payment reference"
+              autocomplete="off"
+              required
+            >
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="amount">
+              Amount paid (ZMW)
+            </label>
+
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              min="0"
+              step="0.01"
+              readonly
+              required
+            >
+
+          </div>
+
+
+          <!-- MESSAGE -->
+          <div
+            id="paymentMessage"
+            class="form-message"
+            role="alert"
+            aria-live="polite"
+          ></div>
+
+
+          <button
+            type="submit"
+            id="paymentButton"
+            class="primary-btn full-btn"
+          >
+            Submit payment
+          </button>
+
+        </form>
+
+
+        <div class="form-footer">
+
+          <a href="index.html">
+            ← Back to PriceList
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="site-footer">
+
+    <p>
+      © 2026 Let's Trade ZM. All rights reserved.
+    </p>
+
+  </footer>
+
+
+  <!-- YOUR EXISTING PAYMENT JAVASCRIPT -->
+  <script type="module" src="js/payment.js"></script>
+
+</body>
+</html>
